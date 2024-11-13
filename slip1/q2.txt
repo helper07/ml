@@ -1,0 +1,19 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn import datasets
+from sklearn.preprocessing import LabelEncoder
+
+iris = datasets.load_iris()
+df = pd.DataFrame(data=iris.data, columns=iris.feature_names)
+df['species'] = iris.target
+
+label_encoder = LabelEncoder()
+df['species'] = label_encoder.fit_transform(df['species'])
+
+plt.figure(figsize=(8, 6))
+plt.scatter(df['sepal length (cm)'], df['sepal width (cm)'], c=df['species'], cmap='viridis', alpha=0.6)
+plt.title('Scatter Plot of Sepal Length vs Sepal Width')
+plt.xlabel('Sepal Length (cm)')
+plt.ylabel('Sepal Width (cm)')
+plt.colorbar(label='Species (0=Setosa, 1=Versicolor, 2=Virginica)')
+plt.show()

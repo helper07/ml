@@ -1,0 +1,31 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.preprocessing import StandardScaler
+from sklearn.cluster import AgglomerativeClustering
+from sklearn.decomposition import PCA
+
+df = pd.read_csv('wholesale_customers_data.csv')
+
+print(df.head())
+
+df_numerical = df.drop(['Channel', 'Region'], axis=1)
+
+scaler = StandardScaler()
+df_normalized = scaler.fit_transform(df_numerical)
+
+clustering = AgglomerativeClustering(n_clusters=5, affinity='euclidean', linkage='ward')
+df['Cluster'] = clustering.fit_predict(df_normalized)
+
+pca = PCA(n_components=2)
+df_pca = pca.fit_transform(df_normalized)
+
+plt.figure(figsize=(8, 6))
+plt.scatter(df_pca[:, 0], df_pca[:, 1], c=df['Cluster'], cmap='viridis')
+plt.title('Agglomerative Clustering of Wholesale Customers')
+plt.xlabel('PCA Component 1')
+plt.ylabel('PCA Component 2')
+plt.colorbar(label='Cluster')
+plt.show()
+
+print(df[['Cluster', 'Channel', 'Region']].head())

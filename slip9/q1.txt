@@ -1,0 +1,30 @@
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import Ridge, Lasso
+from sklearn.preprocessing import StandardScaler
+from sklearn.datasets import load_boston
+
+boston = load_boston()
+data = pd.DataFrame(boston.data, columns=boston.feature_names)
+
+X = data[['RM']]
+y = boston.target
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+
+ridge = Ridge(alpha=1.0)
+ridge.fit(X_train_scaled, y_train)
+
+lasso = Lasso(alpha=0.1)
+lasso.fit(X_train_scaled, y_train)
+
+rooms = scaler.transform([[5]])
+ridge_prediction = ridge.predict(rooms)
+lasso_prediction = lasso.predict(rooms)
+
+print(f"Ridge Regression Prediction for house with 5 rooms: {ridge_prediction[0]}")
+print(f"Lasso Regression Prediction for house with 5 rooms: {lasso_prediction[0]}")

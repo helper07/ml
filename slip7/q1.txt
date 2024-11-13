@@ -1,0 +1,28 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
+
+df = pd.read_csv('Salary_positions.csv')
+
+df = df.dropna()
+
+X = df[['Position Level']]
+y = df['Salary']
+
+model = LinearRegression()
+
+model.fit(X, y)
+
+level_11_salary = model.predict([[11]])
+level_12_salary = model.predict([[12]])
+
+print(f"Predicted Salary for Level 11: {level_11_salary[0]}")
+print(f"Predicted Salary for Level 12: {level_12_salary[0]}")
+
+plt.scatter(X, y, color='blue')
+plt.plot(X, model.predict(X), color='red')
+plt.title('Salary Prediction based on Position Level')
+plt.xlabel('Position Level')
+plt.ylabel('Salary')
+plt.show()

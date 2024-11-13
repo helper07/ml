@@ -1,0 +1,32 @@
+import numpy as np
+from tensorflow.keras.datasets import mnist
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense
+from tensorflow.keras.utils import to_categorical
+from tensorflow.keras.preprocessing import image
+
+(X_train, y_train), (X_test, y_test) = mnist.load_data()
+X_train = X_train.reshape(-1, 28, 28, 1).astype('float32') / 255
+X_test = X_test.reshape(-1, 28, 28, 1).astype('float32') / 255
+y_train = to_categorical(y_train, 10)
+y_test = to_categorical(y_test, 10)
+
+model = Sequential()
+model.add(Conv2D(32, kernel_size=(3, 3), activation='relu', input_shape=(28, 28, 1)))
+model.add(MaxPooling2D(pool_size=(2, 2)))
+model.add(Conv2D(64, kernel_size=(3, 3), activation='relu'))
+model.add(MaxPooling2D(pool_size=(2, 2)))
+model.add(Flatten())
+model.add(Dense(128, activation='relu'))
+model.add(Dense(10, activation='softmax'))
+
+model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+model.fit(X_train, y_train, epochs=5, batch_size=128, validation_data=(X_test, y_test))
+
+def predict_digit(img_path):
+    img = image.load_img(img_path, target_size=(28, 28), color_mode="grayscale")
+    img = image.img_to_array(img).reshape(1, 28, 28, 1).astype('float32') / 255
+    prediction = model.predict(img)
+    return np.argmax(prediction)
+
+print(predict_digit('handwritten_digit_image.png'))
